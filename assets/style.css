@@ -1,3 +1,101 @@
-h1 {
-    color: aqua;
+:root {
+    --light:rgb(236, 233, 233); 
+    --dark:rgb(68, 68, 67)
+    }
+ 
+html, body {
+    background-color: var(--light);
+    font-family: sans-serif;
 }
+
+#navigation {
+    background-color: var(--dark);
+}
+
+#logo {
+    font-family: Dancing Script;
+    color: var(--light);
+}
+
+#navigation button {
+    background-color: var(--light);
+}
+
+#navigation ul > :first-child a {
+    color: var(--light);
+
+}
+
+#banner {
+    background-image: url(images/background.png);
+    background-size: cover;
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;      
+}
+
+#selectFood {
+    background: var(--light);
+    opacity: 0.8;
+    color: var(--dark);
+}
+
+#selectCountry {
+    background-color: var(--light);
+    opacity: 0.8;
+    color: var(--dark);
+}
+#searchBtn {
+    background-color: var(--light);
+    color: var(--dark);
+}
+.map {
+    border: solid 2px red;
+    width: 100%;
+    height: 30vh;    
+}
+
+#wikiBtn {
+    background-color: var(--light);
+}
+
+#wikiBtn button {
+    background-color: var(--light);
+    border: solid var(--dark);
+    color: var(--dark);
+}
+
+#recipe {
+    background-color: var(--light);
+}
+
+#recipe .card,
+#collection .card {
+    background-color: var(--light);
+    color: var(--dark);
+
+}
+
+#collection {
+    background-color: var(--light);
+    color: var(--dark);
+    /* height: 150px; */
+
+}
+
+#collection-bg {
+    background-color: var(--dark);
+    height: 20vh;
+    position: relative;
+    top: -100px;
+}
+
+#collection .card {
+    z-index: 2;
+}
+
+footer {
+    top: -100px;
+}
+
+
