@@ -28,3 +28,4 @@ document.addEventListener("DOMContentLoaded", function () {
       window.open(wikipediaLink, "_blank");
     });
   
+    // comme
