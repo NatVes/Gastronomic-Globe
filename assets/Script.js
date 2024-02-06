@@ -109,3 +109,28 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
 document.querySelector('.save-btn').addEventListener('click', () => {
 
 });
+
+/// Function to render 3 random cards on the bottom of the page
+async function renderRandomCards() {
+  const randomRecipeURL = 'https://themealdb.com/api/json/v1/1/random.php';
+  for (let i = 0; i < 3; i++) {
+    const randomResponse = await fetch(randomRecipeURL);
+    const randomData = await randomResponse.json();
+    const randomRecipe = randomData.meals[0];
+
+    /// Append received data to the #collection element in the footer
+    document.getElementById('collection').innerHTML += `
+      <div class="card">
+        <img src="${randomRecipe.strMealThumb}" class="card-img-top" alt="${randomRecipe.strMeal}">
+        <div class="card-body">
+          <h5 class="card-title">${randomRecipe.strMeal}</h5>
+          <a href="#" class="btn save-btn">Open</a>
+        </div>
+      </div>
+    `;
+  }
+}
+
+/// Render the options into drop-down menus
+renderDropdownOptions();
+
