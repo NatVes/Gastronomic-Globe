@@ -1,6 +1,6 @@
 const bingMapsAPIKey = 'AmN9gnZWL8MOdvtKxP6U7jUfq9s0bgJrzjoS9a4kSn57vFOxx63oMw4HOnXdGbHR';
 
-const countries = ["America", "United%20kingdom", "Canada", "China", "Croatia", "Netherlands", "Egypt", "Philippines", "France", "Greece", "India", "Ireland", "Italy", "Jamaica", "Japan", "Kenya", "Malaysia", "Mexico", "Morocco", "Poland", "Portugal", " Russia", "Spanish", "Thailand", "Tunisia", "Turkey", "Vietnam"];
+const countries = ["America", "United%20kingdom", "Canada", "China", "Croatia", "Netherlands", "Egypt", "Philippines", "France", "Greece", "India", "Ireland", "Italy", "Jamaica", "Japan", "Kenya", "Malaysia", "Mexico", "Morocco", "Poland", "Portugal", "Russia", "Spanish", "Thailand", "Tunisia", "Turkey", "Vietnam"];
 
 let recipes = [];
 
@@ -12,7 +12,7 @@ async function fetchAndRenderMap(countryName) {
   const mapResponse = await fetch(mapURL);
   const mapBlob = await mapResponse.blob();
   const mapImageUrl = URL.createObjectURL(mapBlob);
-  document.getElementById('map').innerHTML = `<img src="${mapImageUrl}" alt="${countryName} Map" style="object-fit: cover; width: 100%; height: 100%">`;
+  $("#map").html(`<img src="${imageUrl}" alt="Bing Map" style="object-fit: cover; width: 100%; height: 100%">`);
 }
 
 /// options for the drop-down menus
