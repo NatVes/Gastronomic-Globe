@@ -19,3 +19,18 @@ async function displayRecipesInRecipeSection(name) {
     console.error('No recipes found.');
   }
 }
+
+/// Render recipe in the recipe section
+function renderRecipeInRecipeSection(recipe) {
+ 
+  console.log(`Render recipe in recipe section: ${recipe.strMeal}`);
+}
+
+/// Fetch the map data 
+async function fetchAndRenderMap(countryName) {
+  const mapURL = `https://dev.virtualearth.net/REST/v1/Imagery/Map/AerialWithLabels/${countryName}?mapSize=2000,1500&key=${bingMapsAPIKey}`;
+  const mapResponse = await fetch(mapURL);
+  const mapBlob = await mapResponse.blob();
+  const mapImageUrl = URL.createObjectURL(mapBlob);
+  document.getElementById('map').innerHTML = `<img src="${mapImageUrl}" alt="${countryName} Map">`;
+}
