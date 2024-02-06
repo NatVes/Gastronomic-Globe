@@ -131,6 +131,6 @@ async function renderRandomCards() {
   }
 }
 
-/// Render the options into drop-down menus
+/// Render the options within drop-down menus
 renderDropdownOptions();
 
