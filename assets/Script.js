@@ -37,7 +37,6 @@ async function fetchAndRenderMap(countryName) {
 
 /// options for the drop-down menus
 async function renderDropdownOptions() {
-  /// Fetch food options
   const foodURL = 'https://themealdb.com/api/json/v1/1/list.php?c=list';
   const foodResponse = await fetch(foodURL);
   const foodData = await foodResponse.json();
@@ -62,3 +61,51 @@ async function renderDropdownOptions() {
     document.getElementById('selectCountry').appendChild(option);
   });
 }
+///  searchBtn event listener
+document.getElementById('searchBtn').addEventListener('click', async () => {
+  event.preventDefault();
+  const selectedFood = document.getElementById('selectFood').value;
+  const selectedCountry = document.getElementById('selectCountry').value;
+
+  // Fetch the map and render it
+  await fetchAndRenderMap(selectedCountry);
+
+  /// Wikipedia link to update
+  document.getElementById('wikiBtn').href = `https://en.wikipedia.org/wiki/${selectedCountry}`;
+
+  /// Fetch recipes by selected food and country
+  const categoryURL = `https://themealdb.com/api/json/v1/1/filter.php?c=${selectedFood}`;
+  const areaURL = `https://themealdb.com/api/json/v1/1/filter.php?a=${selectedCountry}`;
+
+  const [categoryResponse, areaResponse] = await Promise.all([fetch(categoryURL), fetch(areaURL)]);
+  const [categoryData, areaData] = await Promise.all([categoryResponse.json(), areaResponse.json()]);
+
+  const categoryIds = categoryData.meals.map(meal => meal.idMeal);
+  const areaIds = areaData.meals.map(meal => meal.idMeal);
+
+  const matchingIds = categoryIds.filter(id => areaIds.includes(id));
+
+  if (matchingIds.length === 0) {
+    document.getElementById('recipe').innerHTML = '<p>No matches found :(</p>';
+  } else {
+    const randomId = matchingIds[Math.floor(Math.random() * matchingIds.length)];
+    const mealByIdResponse = await fetch(`https://themealdb.com/api/json/v1/1/lookup.php?i=${randomId}`);
+    const mealByIdData = await mealByIdResponse.json();
+    const randomMeal = mealByIdData.meals[0];
+
+    /// Render the selected recipe in the #recipe element
+    document.getElementById('recipe').innerHTML = `
+      <img src="${randomMeal.strMealThumb}" class="card-img-top" alt="${randomMeal.strMeal}">
+      <div class="card-body">
+        <h5 class="card-title">${randomMeal.strMeal}</h5>
+        <p class="card-text">${randomMeal.strInstructions}</p>
+        <a href="#" class="btn save-btn">Save</a>
+      </div>
+    `;
+  }
+});
+
+/// Event listener for .save-btn
+document.querySelector('.save-btn').addEventListener('click', () => {
+
+});
