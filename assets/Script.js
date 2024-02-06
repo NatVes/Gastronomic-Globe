@@ -34,3 +34,31 @@ async function fetchAndRenderMap(countryName) {
   const mapImageUrl = URL.createObjectURL(mapBlob);
   document.getElementById('map').innerHTML = `<img src="${mapImageUrl}" alt="${countryName} Map">`;
 }
+
+/// options for the drop-down menus
+async function renderDropdownOptions() {
+  /// Fetch food options
+  const foodURL = 'https://themealdb.com/api/json/v1/1/list.php?c=list';
+  const foodResponse = await fetch(foodURL);
+  const foodData = await foodResponse.json();
+  foodData.meals.forEach(category => {
+    const option = document.createElement('option');
+    option.value = category.strCategory.toLowerCase();
+    option.textContent = category.strCategory;
+    document.getElementById('selectFood').appendChild(option);
+  });
+
+  /// options to fetch recipe through country 
+  const allAreaURL = 'https://themealdb.com/api/json/v1/1/list.php?a=list';
+  const areaResponse = await fetch(allAreaURL);
+  const areaData = await areaResponse.json();
+  const filteredCountries = areaData.meals
+    .map(country => country.strArea)
+    .filter(area => area !== 'Unknown');
+  filteredCountries.forEach(country => {
+    const option = document.createElement('option');
+    option.value = country.toLowerCase();
+    option.textContent = country;
+    document.getElementById('selectCountry').appendChild(option);
+  });
+}
