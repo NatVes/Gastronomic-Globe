@@ -1,30 +1,10 @@
 const bingMapsAPIKey = 'AmN9gnZWL8MOdvtKxP6U7jUfq9s0bgJrzjoS9a4kSn57vFOxx63oMw4HOnXdGbHR';
-const themealdbAPIKey = 'https://themealdb.com/api/json/v1/1/list.php?c=list'; // 
 
-/// Fetch recipes by name 
-async function fetchRecipesByName(name) {
-  const response = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${name}&apiKey=${themealdbAPIKey}`);
-  const data = await response.json();
-  return data.meals || [];
-}
+const countries = ["America", "United%20kingdom", "Canada", "China", "Croatia", "Netherlands", "Egypt", "Philippines", "France", "Greece", "India", "Ireland", "Italy", "Jamaica", "Japan", "Kenya", "Malaysia", "Mexico", "Morocco", "Poland", "Portugal", " Russia", "Spanish", "Thailand", "Tunisia", "Turkey", "Vietnam"];
 
-/// Display of recipe section
-async function displayRecipesInRecipeSection(name) {
-  const recipes = await fetchRecipesByName(name);
-  if (recipes.length > 0) {
-    recipes.forEach(recipe => {
-      renderRecipeInRecipeSection(recipe);
-    });
-  } else {
-    console.error('No recipes found.');
-  }
-}
+let recipes = [];
 
-/// Render recipe in the recipe section
-function renderRecipeInRecipeSection(recipe) {
- 
-  console.log(`Render recipe in recipe section: ${recipe.strMeal}`);
-}
+checkAdd();
 
 /// Fetch the map data 
 async function fetchAndRenderMap(countryName) {
@@ -32,19 +12,17 @@ async function fetchAndRenderMap(countryName) {
   const mapResponse = await fetch(mapURL);
   const mapBlob = await mapResponse.blob();
   const mapImageUrl = URL.createObjectURL(mapBlob);
-  document.getElementById('map').innerHTML = `<img src="${mapImageUrl}" alt="${countryName} Map">`;
+  document.getElementById('map').innerHTML = `<img src="${mapImageUrl}" alt="${countryName} Map" style="object-fit: cover; width: 100%; height: 100%">`;
 }
 
 /// options for the drop-down menus
-async function renderDropdownOptions() {
+(async function renderDropdownOptions() {
+  /// options to fetch recipe through food type
   const foodURL = 'https://themealdb.com/api/json/v1/1/list.php?c=list';
   const foodResponse = await fetch(foodURL);
   const foodData = await foodResponse.json();
-  foodData.meals.forEach(category => {
-    const option = document.createElement('option');
-    option.value = category.strCategory.toLowerCase();
-    option.textContent = category.strCategory;
-    document.getElementById('selectFood').appendChild(option);
+  foodData.meals.forEach(category => {    
+    $("#selectFood").append(`<option value="${category.strCategory}">${category.strCategory}</option>`); 
   });
 
   /// options to fetch recipe through country 
@@ -53,84 +31,148 @@ async function renderDropdownOptions() {
   const areaData = await areaResponse.json();
   const filteredCountries = areaData.meals
     .map(country => country.strArea)
-    .filter(area => area !== 'Unknown');
-  filteredCountries.forEach(country => {
-    const option = document.createElement('option');
-    option.value = country.toLowerCase();
-    option.textContent = country;
-    document.getElementById('selectCountry').appendChild(option);
-  });
-}
-///  searchBtn event listener
-document.getElementById('searchBtn').addEventListener('click', async () => {
-  event.preventDefault();
-  const selectedFood = document.getElementById('selectFood').value;
-  const selectedCountry = document.getElementById('selectCountry').value;
+    .filter(area => area !== 'Unknown');    
+  for(i=0; i<filteredCountries.length; i++) {
+    $("#selectCountry").append(`<option value="${countries[i]}">${filteredCountries[i]}</option>`);
+  };
+})();
 
+///  searchBtn event listener
+$("#searchBtn").on('click', async (event) => {
+  event.preventDefault();
+  let selectedFood = $("#selectFood").val();
+  let selectedCountry = $("#selectCountry").val(); //america
+  let areaName = $("#selectCountry option:selected").text(); //american
   // Fetch the map and render it
   await fetchAndRenderMap(selectedCountry);
 
   /// Wikipedia link to update
-  document.getElementById('wikiBtn').href = `https://en.wikipedia.org/wiki/${selectedCountry}`;
+  $("#wikiBtn a").attr({"href": `https://en.wikipedia.org/wiki/${selectedCountry}`, "target": "_blank"}); 
 
   /// Fetch recipes by selected food and country
-  const categoryURL = `https://themealdb.com/api/json/v1/1/filter.php?c=${selectedFood}`;
-  const areaURL = `https://themealdb.com/api/json/v1/1/filter.php?a=${selectedCountry}`;
+  let categoryURL = `https://themealdb.com/api/json/v1/1/filter.php?c=${selectedFood}`;
+  let areaURL = `https://themealdb.com/api/json/v1/1/filter.php?a=${areaName}`;
 
-  const [categoryResponse, areaResponse] = await Promise.all([fetch(categoryURL), fetch(areaURL)]);
-  const [categoryData, areaData] = await Promise.all([categoryResponse.json(), areaResponse.json()]);
+  let [categoryResponse, areaResponse] = await Promise.all([fetch(categoryURL), fetch(areaURL)]);
+  let [categoryData, areaData] = await Promise.all([categoryResponse.json(), areaResponse.json()]);
 
-  const categoryIds = categoryData.meals.map(meal => meal.idMeal);
-  const areaIds = areaData.meals.map(meal => meal.idMeal);
+  let categoryIds = categoryData.meals.map(meal => meal.idMeal);
+  let areaIds = areaData.meals.map(meal => meal.idMeal);
 
-  const matchingIds = categoryIds.filter(id => areaIds.includes(id));
+  let matchingIds = categoryIds.filter(id => areaIds.includes(id));
 
   if (matchingIds.length === 0) {
-    document.getElementById('recipe').innerHTML = '<p>No matches found :(</p>';
+    $("#recipe").text("");
+    $("#recipe").append(`<div class="row justify-content-center">No matches found :(</div>`);
   } else {
-    const randomId = matchingIds[Math.floor(Math.random() * matchingIds.length)];
-    const mealByIdResponse = await fetch(`https://themealdb.com/api/json/v1/1/lookup.php?i=${randomId}`);
-    const mealByIdData = await mealByIdResponse.json();
-    const randomMeal = mealByIdData.meals[0];
+    let randomId = matchingIds[Math.floor(Math.random() * matchingIds.length)];
+
+    let mealIdURL = `https://themealdb.com/api/json/v1/1/lookup.php?i=${randomId}`;
+    let mealByIdResponse = await fetch(mealIdURL);
+    let mealByIdData = await mealByIdResponse.json();
+    let randomMeal = mealByIdData.meals[0];
 
     /// Render the selected recipe in the #recipe element
-    document.getElementById('recipe').innerHTML = `
-      <img src="${randomMeal.strMealThumb}" class="card-img-top" alt="${randomMeal.strMeal}">
-      <div class="card-body">
-        <h5 class="card-title">${randomMeal.strMeal}</h5>
-        <p class="card-text">${randomMeal.strInstructions}</p>
-        <a href="#" class="btn save-btn">Save</a>
-      </div>
-    `;
+    $("#recipe").text("");
+    let ol = listIngredients(mealByIdData);                    
+    $("#recipe").append(`<div class="row justify-content-center">
+                            <div class="card col-sm-11 col-md-10 col-lg-7 col-xl-7">                        
+                                <img src="${randomMeal.strMealThumb}" class="card-img-top" alt="${randomMeal.strMeal}" style="object-fit: cover; width: 100%; height: 30vh">
+                                <div class="card-body">
+                                    <h5 class="card-title" data-id:"${randomMeal.idMeal}">${randomMeal.strMeal}</h5>
+                                    ${ol.prop('outerHTML')}
+                                    <p class="card-text">${randomMeal.strInstructions}</p>
+                                    <div class="row justify-content-end">
+                                        <button class="btn col-xxl-2 col-sm-2 save-btn">Save</button>                                                       
+                                    </div>                        
+                                </div>                        
+                            </div>
+                        </div>`)
   }
 });
 
 /// Event listener for .save-btn
-document.querySelector('.save-btn').addEventListener('click', () => {
-
+$("#recipe").on("click", ".save-btn", function(event) {
+  event.preventDefault();
+  let mealName = $("h5", "#recipe").text(); 
+  if (!recipes.includes(mealName)) {
+      recipes.push(mealName);
+  }
+  storeSavedData();
 });
 
 /// Function to render 3 random cards on the bottom of the page
-async function renderRandomCards() {
+(async function renderRandomCards() {
   const randomRecipeURL = 'https://themealdb.com/api/json/v1/1/random.php';
   for (let i = 0; i < 3; i++) {
-    const randomResponse = await fetch(randomRecipeURL);
-    const randomData = await randomResponse.json();
-    const randomRecipe = randomData.meals[0];
-
-    /// Append received data to the #collection element in the footer
-    document.getElementById('collection').innerHTML += `
-      <div class="card">
-        <img src="${randomRecipe.strMealThumb}" class="card-img-top" alt="${randomRecipe.strMeal}">
-        <div class="card-body">
-          <h5 class="card-title">${randomRecipe.strMeal}</h5>
-          <a href="#" class="btn save-btn">Open</a>
-        </div>
-      </div>
-    `;
+      const randomResponse = await fetch(randomRecipeURL);
+      const randomData = await randomResponse.json();
+      const randomRecipe = randomData.meals[0];
+      let ol = listIngredients(randomData);
+      let modalId = `staticBackdrop-${i}`;
+      // Append received data to the #collection element in the footer
+      $("#collectionCard").append(`<div class="card col-sm-8 col-md-3 col-xl-2 align-content-between">                            
+      <img src="${randomRecipe.strMealThumb}" class="card-img-top" alt="${randomRecipe.strMeal}" style="object-fit: cover; width: 100%">
+      <div class="card-body flex-column align-content-end">
+          <h5 class="card-title fs-6">${randomRecipe.strMeal}</h5>
+          <button type="button" class="btn open-btn" data-bs-toggle="modal" data-bs-target="#${modalId}">Open</button>
+          <div class="modal fade" id="${modalId}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">                                                    
+                          <h1 class="modal-title fs-5" id="${modalId}Label">${randomRecipe.strMeal}</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body text-start">
+                              ${ol.prop('outerHTML')}
+                              <p class="card-text">${randomRecipe.strInstructions}</p>                                                                           
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>                                                      
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>                            
+  </div>`);
   }
+})();
+
+function storeSavedData() {
+  localStorage.setItem("recipes", JSON.stringify(recipes));
 }
 
-/// Render the options within drop-down menus
-renderDropdownOptions();
+function checkAdd() {    
+  let storedData = JSON.parse(localStorage.getItem("recipes"));    
+  if (storedData !== null) {
+      recipes = storedData;
+  }    
+}
+
+function listIngredients(data) {
+  let strIngredient = Object.keys(data.meals[0]).filter(key => key.includes("strIngredient"));   //create an array of all the keys containing "strIngredient"               
+  let ingredients = strIngredient.map(key => data.meals[0][key]).filter(value => value !== null); //delete all "strIngredient" with value = null
+
+  let strMeasure = Object.keys(data.meals[0]).filter(key => key.includes("strMeasure")); //create an array of all the keys containing "strMeasure"               
+  let measure = strMeasure.map(key => data.meals[0][key]).filter(value => value !== null); //delete all "strIngredient" with value = null
+
+  let allMeasureIngredient = ingredients.map((ing, msr) => {   //create an array of arrays containing matching ingredients and measures
+      return [ing, measure[msr]]
+  });
+
+  let measureIngredient = allMeasureIngredient.map(pair => pair.filter(value => value !== "" && value !== " ")).filter(array => array.length>0); //delete all empty arrays    
+  
+  let ol = $("<ol>");
+  
+  for(let i=0; i<measureIngredient.length; i++) {
+      let li = $("<li>");
+      if(measureIngredient[i].length<2) {
+          li.text(measureIngredient[i][0]);
+      } else {
+          li.text(measureIngredient[i][0] + " - " + measureIngredient[i][1]);
+      }
+      ol.append(li);
+  }
+  return ol;
+}
 
