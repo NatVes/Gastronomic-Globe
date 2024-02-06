@@ -12,7 +12,7 @@ async function fetchAndRenderMap(countryName) {
   const mapResponse = await fetch(mapURL);
   const mapBlob = await mapResponse.blob();
   const mapImageUrl = URL.createObjectURL(mapBlob);
-  $("#map").html(`<img src="${imageUrl}" alt="Bing Map" style="object-fit: cover; width: 100%; height: 100%">`);
+  $("#map").html(`<img src="${mapImageUrl}" alt="Bing Map" style="object-fit: cover; width: 100%; height: 100%">`);
 }
 
 /// options for the drop-down menus
