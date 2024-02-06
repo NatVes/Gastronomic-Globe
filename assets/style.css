@@ -54,13 +54,14 @@ main {
     color: var(--dark);
 }
 
-#searchBtn,
+#searchBtn:hover
 #recipe .card,
 #collection .card,
 #stock .card,
 footer  {
     background-color: var(--light);
     color: var(--dark);
+    transition-duration: 0.4s;
 }
 
 #map {
@@ -85,9 +86,9 @@ footer  {
 }
 
 
-#save-btn:hover 
-#save-btn:focus
-.save-btn-outline:active{
+.save-btn-outline:hover 
+.save-btn-outline:focus
+.save-btn-outline   `:active{
     transition-duration: 0.4s; 
     cursor: pointer;
     background-color: darkgoldenrod;
