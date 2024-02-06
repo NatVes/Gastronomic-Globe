@@ -54,14 +54,14 @@ main {
     color: var(--dark);
 }
 
-#searchBtn:hover
+#searchBtn
 #recipe .card,
 #collection .card,
 #stock .card,
 footer  {
     background-color: var(--light);
     color: var(--dark);
-    transition-duration: 0.4s;
+    
 }
 
 #map {
@@ -76,6 +76,15 @@ footer  {
     color: var(--dark);
 }      
 
+#recipe .save-btn  {
+    border: solid var(--dark);
+    font-size: 14px;
+    /* padding: 15px ; */
+    /* color: white; */
+    /* border-radius: 300px; */
+  
+}
+
 #recipe .save-btn:hover  {
     border: solid var(--dark);
     font-size: 14px;
@@ -85,14 +94,45 @@ footer  {
     background-color: darkgoldenrod;   
 }
 
-
 .save-btn-outline:hover 
 .save-btn-outline:focus
-.save-btn-outline   `:active{
+.save-btn-outline:active{
     transition-duration: 0.4s; 
     cursor: pointer;
     background-color: darkgoldenrod;
     box-shadow: 0 0.1875rem 0.1875rem 0 rgba(78, 8, 219, 0.1) !important;  
+}
+
+#collection a:hover {
+    transition-duration: 0.4s; 
+    cursor: pointer;
+    background-color: darkgoldenrod;
+    box-shadow: 0 0.1875rem 0.1875rem 0 rgba(78, 8, 219, 0.1) !important;
+}
+
+#collection a:hover  {
+    border: solid var(--dark);
+    font-size: 14px;
+    /* padding: 15px ; */
+    /* color: white; */
+    /* border-radius: 300px; */
+    background-color: darkgoldenrod;   
+}
+
+.btn .save-btn {
+    transition-duration: 0.4s; 
+    cursor: pointer;
+    background-color: darkgoldenrod;
+    box-shadow: 0 0.1875rem 0.1875rem 0 rgba(78, 8, 219, 0.1) !important;
+}
+
+.btn .save-btn {
+    border: solid var(--dark);
+    font-size: 14px;
+    /* padding: 15px ; */
+    /* color: white; */
+    /* border-radius: 300px; */
+    background-color: darkgoldenrod;   
 }
 
 #recipe .next {    
