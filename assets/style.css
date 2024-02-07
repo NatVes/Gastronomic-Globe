@@ -72,6 +72,7 @@ main {
     color: var(--dark);
 }
 
+
 #searchBtn,
 #recipe .card,
 #collection .card,
@@ -91,6 +92,38 @@ footer  {
     border: solid var(--dark);
     font-size: 18px;    
     transition: 0.3s;
+}
+
+#collection a:hover {
+    transition-duration: 0.4s; 
+    cursor: pointer;
+    background-color: darkgoldenrod;
+    box-shadow: 0 0.1875rem 0.1875rem 0 rgba(78, 8, 219, 0.1) !important;
+}
+
+#collection a:hover  {
+    border: solid var(--dark);
+    font-size: 14px;
+    /* padding: 15px ; */
+    /* color: white; */
+    /* border-radius: 300px; */
+    background-color: darkgoldenrod;   
+}
+
+.btn .save-btn {
+    transition-duration: 0.4s; 
+    cursor: pointer;
+    background-color: darkgoldenrod;
+    box-shadow: 0 0.1875rem 0.1875rem 0 rgba(78, 8, 219, 0.1) !important;
+}
+
+.btn .save-btn {
+    border: solid var(--dark);
+    font-size: 14px;
+    /* padding: 15px ; */
+    /* color: white; */
+    /* border-radius: 300px; */
+    background-color: darkgoldenrod;   
 }
 
 #recipe .next {    
